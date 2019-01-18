@@ -1,7 +1,16 @@
 {%extends "layout.html"%}
 
 {%block body%}
-<p style="color: red; font-size:20px">{{city["name"]}} , {{city["country"]}}</p>
-<p style="color: red; font-size:20px">{{city["temp"]}}</p>
-
-{%endblock%}
+<form  method='POST'>
+    {{form.zipcode.label}} {{form.zipcode}}
+    {{form.submit}}
+</form>
+{%if cities%}
+	{%for city in cities%}
+		<p style="color: red; font-size:40px">{{city["name"]}} , {{city["country"]}}</p>
+		<p style="color: red; font-size:20px">{{city["temperature"]}}</p>
+		<p style="color: red; font-size:20px">{{city["weather"]}}</p>
+		<br>
+	{%endfor%}
+{%endif%}
+{%endblock%}  
