@@ -1,16 +1,18 @@
 {%extends "layout.html"%}
 
 {%block body%}
-<form  method='POST'>
-    {{form.zipcode.label}} {{form.zipcode}}
-    {{form.submit}}
+<form class="form-inline">
+	        {{form.zipcode.label(class="sr-only")}}
+		{{form.zipcode(class="form-control mb-2 mr-sm-2", placeholder="ZIPCODE")}} 
+		{{form.submit(class="btn btn-primary mb-2")}}
 </form>
+<div>
 {%if cities%}
 	{%for city in cities%}
-		<p style="color: red; font-size:40px">{{city["name"]}} , {{city["country"]}}</p>
+		<p style="color: red; font-size:30px">{{city["name"]}} , {{city["country"]}}</p>
 		<p style="color: red; font-size:20px">{{city["temperature"]}}</p>
 		<p style="color: red; font-size:20px">{{city["weather"]}}</p>
-		<br>
 	{%endfor%}
 {%endif%}
+</div>
 {%endblock%}  

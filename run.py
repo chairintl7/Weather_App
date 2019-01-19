@@ -13,6 +13,7 @@ app.secret_key = 'development key'
 class City(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
+    zipcode = db.Column(db.String(10), nullable=False)
     country = db.Column(db.String(3), nullable=False)
     temperature = db.Column(db.Integer, nullable=False)
     weather = db.Column(db.String(30), nullable=False)
@@ -22,9 +23,9 @@ class City(db.Model):
 
 @app.route('/', methods = ['POST', 'GET'])
 def index():
-    form = CityWeatherForm()
-    cities = City.query.all()
-
+    form = CityWeatherForm() 
+    cities = update_cities_weather()
+    
     if request.method == 'POST':
         if form.zipcode.data:
             city = get_city_weather(form.zipcode.data)
@@ -35,6 +36,21 @@ def index():
     return render_template('index.html', form=form, cities = cities)
 
 #helper methods
+def update_cities_weather():
+    cities = City.query.all()
+    for c in cities:
+        update_city = get_city_weather(c.zipcode)
+        
+        c.name = update_city.name
+        c.country = update_city.country
+        c.temperature = update_city.temperature
+        c.zipcode = update_city.zipcode
+        c.weather = update_city.weather
+
+        db.session.commit()
+
+    return City.query.all()
+    
 def get_city_weather(zip):
     url = 'http://api.openweathermap.org/data/2.5/weather?zip={},us&units=imperial&appid=1f55a181c9357b6ef3f0b18d331de757'.format(zip)    
     
@@ -45,6 +61,7 @@ def get_city_weather(zip):
     new_city.name = jsonReq['name']
     new_city.country = jsonReq['sys']['country']
     new_city.temperature = jsonReq['main']['temp']
+    new_city.zipcode = zip
     new_city.weather = jsonReq['weather'][0]['description']
     
     return new_city
