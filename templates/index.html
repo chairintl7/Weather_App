@@ -1,18 +1,30 @@
 {%extends "layout.html"%}
 
 {%block body%}
-<form class="form-inline">
-	        {{form.zipcode.label(class="sr-only")}}
-		{{form.zipcode(class="form-control mb-2 mr-sm-2", placeholder="ZIPCODE")}} 
-		{{form.submit(class="btn btn-primary mb-2")}}
-</form>
+<header style="height: 50%; background-color:#4169E1">
+	<h1 style="text-align:center; font-family: 'Adamina';font-size: 20px; color:snow;">How's the Weather Up There?</h1>
+</header>
+<br>
+<br>
+<div style="width: 20%; margin: 0px auto" >
+	<form class="form-inline" style="margin: 0 auto", method="POST">
+			{{form.zipcode.label(class="sr-only")}}
+			{{form.zipcode(class="form-control mb-2 mr-sm-2", placeholder="ZIPCODE")}} 
+			{{form.submit(class="btn btn-primary mb-2")}}
+	</form>
+</div>
 <div>
 {%if cities%}
 	{%for city in cities%}
-		<p style="color: red; font-size:30px">{{city["name"]}} , {{city["country"]}}</p>
-		<p style="color: red; font-size:20px">{{city["temperature"]}}</p>
-		<p style="color: red; font-size:20px">{{city["weather"]}}</p>
+		<div class="card" style="background-color:lightsteelblue;width: 18rem;box-shadow:5px 5px 10px grey; ; margin: 15px auto; border:1px solid;">
+			<div class="card-body">
+			<h5 class="card-title">{{city["name"]}} , {{city["country"]}}</h5>
+			<p class="card-text">{{city["temperature"]}} &#8457;</p>
+			<p class="card-text">{{city["weather"]}}</p>
+			<a href="{{url_for('delete', zipcode = city['zipcode'])}}" class="btn btn-primary">Delete</a>
+			</div>
+		</div>
 	{%endfor%}
 {%endif%}
-</div>
+
 {%endblock%}  

@@ -29,12 +29,21 @@ def index():
     if request.method == 'POST':
         if form.zipcode.data:
             city = get_city_weather(form.zipcode.data)
-            db.session.add(city)
-            db.session.commit()	
+            if city != None:
+                db.session.add(city)
+                db.session.commit()	
         return redirect(url_for('index'))
 
     return render_template('index.html', form=form, cities = cities)
 
+@app.route('/delete/<zipcode>')
+def delete(zipcode):
+    delete_city = City.query.filter_by(zipcode = zipcode).first()
+
+    db.session.delete(delete_city)
+    db.session.commit()
+    return redirect(url_for('index'))
+    
 #helper methods
 def update_cities_weather():
     cities = City.query.all()
@@ -56,12 +65,15 @@ def get_city_weather(zip):
     
     req = requests.get(url)
     jsonReq = req.json()
+
+    if jsonReq['cod'] != '400' and jsonReq['cod'] != '404':
+        new_city = City()
+        new_city.name = jsonReq['name']
+        new_city.country = jsonReq['sys']['country']
+        new_city.temperature = jsonReq['main']['temp']
+        new_city.zipcode = zip
+        new_city.weather = jsonReq['weather'][0]['description']
     
-    new_city = City()
-    new_city.name = jsonReq['name']
-    new_city.country = jsonReq['sys']['country']
-    new_city.temperature = jsonReq['main']['temp']
-    new_city.zipcode = zip
-    new_city.weather = jsonReq['weather'][0]['description']
-    
-    return new_city
+        return new_city
+    else:
+        return None
